@@ -15,6 +15,7 @@
         <p class="mb-4 text-gray-600 dark:text-gray-300">Welcome to the library database. Use the search to find books by title, author, or ISBN.</p>
         <div class="flex gap-2">
             <a href="{{ url('/book-search') }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500">Search Books</a>
+            <a href="{{ url('/book-check-in') }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500">Check-in Books</a>
             <a href="{{ url('/') }}" class="px-4 py-2 border rounded">Home</a>
         </div>
     </div>

@@ -115,4 +115,94 @@ class BookLoanController extends Controller
 
         return redirect()->back()->with('success', $result['message']);
     }
+
+    /**
+     * Show the check-in search form and results.
+     * Accepts query params: `isbn`, `card_id`, `name` (borrower name substring).
+     */
+    public function checkinForm(Request $request)
+    {
+        $isbn = $request->query('isbn');
+        $cardId = $request->query('card_id');
+        $name = $request->query('name');
+
+        $query = BookLoan::query()->with('borrower')->where(function ($q) {
+            // restrict to active loans only
+            $q->whereNull('Date_in')->orWhere('Date_in', '0000-00-00');
+        });
+
+        if (!empty($isbn)) {
+            $query->where('Isbn', $isbn);
+        }
+
+        if (!empty($cardId)) {
+            $query->where('Card_id', $cardId);
+        }
+
+        if (!empty($name)) {
+            $query->whereHas('borrower', function ($qb) use ($name) {
+                $qb->where('Bname', 'like', "%{$name}%");
+            });
+        }
+
+        $results = null;
+        if (!empty($isbn) || !empty($cardId) || !empty($name)) {
+            $results = $query->orderBy('Due_date')->paginate(20)->appends($request->query());
+        }
+
+        return view('books.checkin', [
+            'results' => $results,
+            'isbn' => $isbn,
+            'card_id' => $cardId,
+            'name' => $name,
+        ]);
+    }
+
+    /**
+     * Process check-in of selected loans. Expects `loan_ids[]` array in POST.
+     */
+    public function processCheckin(Request $request)
+    {
+        $loanIds = $request->input('loan_ids', []);
+
+        if (!is_array($loanIds) || count($loanIds) === 0) {
+            return redirect()->back()->with('error', 'No loans selected for check-in.');
+        }
+
+        if (count($loanIds) > 3) {
+            return redirect()->back()->with('error', 'You may check in at most 3 loans at once.');
+        }
+
+        try {
+            $updated = DB::transaction(function () use ($loanIds) {
+                $today = Carbon::today()->format('Y-m-d');
+                $count = 0;
+                foreach ($loanIds as $id) {
+                    $loan = BookLoan::where('Loan_id', $id)
+                        ->where(function ($q) {
+                            $q->whereNull('Date_in')->orWhere('Date_in', '0000-00-00');
+                        })->first();
+
+                    if (!$loan) {
+                        // skip missing or already-checked-in
+                        continue;
+                    }
+
+                    $loan->Date_in = $today;
+                    $loan->save();
+                    $count++;
+                }
+
+                return $count;
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Server error: '.$e->getMessage());
+        }
+
+        if ($updated === 0) {
+            return redirect()->back()->with('error', 'No selected loans could be checked in (they may already be checked in).');
+        }
+
+        return redirect()->back()->with('success', "Successfully checked in {$updated} loan(s).");
+    }
 }
