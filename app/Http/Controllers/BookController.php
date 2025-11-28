@@ -23,7 +23,12 @@ class BookController extends Controller
                 ->orWhereHas('authors', function ($query) use ($q) {
                     $query->where('name', 'like', "%{$q}%");
                 })
-                ->with('authors')
+                ->with(['authors', 'loans' => function ($q) {
+                    // Only load ACTIVE loans (still checked out)
+                    $q->where(function ($subQ) {
+                        $subQ->whereNull('Date_in');
+                    })->with('borrower');
+                }])
                 ->orderBy('title')
                 ->paginate(10);
         }
