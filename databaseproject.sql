@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 26, 2025 at 08:53 PM
+-- Generation Time: Nov 30, 2025 at 09:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -72009,7 +72009,7 @@ INSERT INTO `borrower` (`Card_id`, `Ssn`, `Bname`, `Address`, `Phone`) VALUES
 
 CREATE TABLE `fines` (
   `Loan_id` int(11) NOT NULL,
-  `Fine_amt` int(11) NOT NULL,
+  `Fine_amt` decimal(8,2) NOT NULL,
   `Paid` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 COMMIT;
