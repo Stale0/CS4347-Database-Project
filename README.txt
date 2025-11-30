@@ -3,14 +3,14 @@ prerequisites
     Download node.js - http://nodejs.org/en/download
     download laravel - https://laravel.com/docs/12.x - I personally recommend doing it through command line
     download xampp - https://www.apachefriends.org/download.html
-    Download Repo/zip (includes database_project.sql file)
+    Download Repo/zip (includes databaseproject.sql file)
 
 1. Xampp set up
    open xampp and start both apache and mysql modules (under actions).
    click into the admin action for mysql, this will open up a web browser for phpmyadmin
    create a new database named databaseproject
    click into it on the left side of the screen then look for and click into the import tab near the top.
-   click choose file and look for database_project.sql, after inputting it scroll to the bottom and hit import
+   click choose file and look for databaseproject.sql, after inputting it scroll to the bottom and hit import
    you now have the sql database loaded within mysql
 
 2. laraval set up
@@ -28,3 +28,12 @@ prerequisites
 
    When testing make sure to save workfile and then simply refresh browser.
    
+The Files that were created for this project are 
+1. Logic/Functions
+    Under app/http\controllers
+    and then app/services
+2. Models/'Classes'
+    Under app/models (Note Exclude users.php that is prebuilt within laravel)
+3. Views/webpage code
+    Resources/Views
+
