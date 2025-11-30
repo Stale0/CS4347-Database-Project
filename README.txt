@@ -21,8 +21,8 @@ prerequisites
    run the following commands
        composer install
        npm install && npm run build
+       php artisan migrate 
        php artisan key:generate
-       php artisan migrate ---- Should be optional
        php artisan serve
    After you run php artisan serve open up chrome/explorer and go to localhost:8000 and you should see our web page
 
