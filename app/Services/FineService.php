@@ -183,7 +183,7 @@ class FineService
             // ensure no active loans
             $hasActive = BookLoan::where('Card_id', $cardId)
                 ->where(function ($q) {
-                    $q->whereNull('Date_in')->orWhere('Date_in', '0000-00-00');
+                    $q->whereNull('Date_in');
                 })->exists();
 
             if ($hasActive) {
@@ -215,7 +215,7 @@ class FineService
             ->whereHas('loan', function ($q) use ($cardId) {
                 $q->where('Card_id', $cardId)
                   ->where(function ($subQ) {
-                      $subQ->whereNull('Date_in')->orWhere('Date_in', '0000-00-00');
+                      $subQ->whereNull('Date_in');
                   });
             })->exists();
     }
